@@ -1205,7 +1205,7 @@ class RayPPOTrainer:
                                 step_u = agreement_step_uncertainty(batch)
                             else:  # V4: average of A and B (per step, so also per attempt)
                                 step_u = 0.5 * (entropy_step_uncertainty(token_entropys, response_masks).float().cpu() + agreement_step_uncertainty(batch))
-                            batch, u_metrics = apply_failure_uncertainty_bonus(batch, step_u, c=self.config.algorithm.get("uncertainty_c", 1.0))
+                            batch, u_metrics = apply_failure_uncertainty_bonus(batch, step_u, c=self.config.algorithm.get("uncertainty_c", 1.0), skip_all_fail_groups=bool(self.config.algorithm.get("uncertainty_skip_all_fail_groups", False)))
                             if uncertainty_method in ("agreement", "both"):
                                 u_metrics["uncertainty/agreement_u_step_mean"] = agreement_step_uncertainty(batch).mean().item()
                             metrics.update(u_metrics)
